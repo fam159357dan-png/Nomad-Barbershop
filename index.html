@@ -10,7 +10,7 @@
 <meta property="og:description" content="Место для настоящих мужчин. Стрижки, сложные волосы, онлайн-запись.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0e0d'/%3E%3Ctext x='32' y='45' font-family='Arial' font-weight='700' font-size='38' text-anchor='middle' fill='%23d6a77a'%3EN%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="img/logo.png">
 <link rel="preload" href="fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
@@ -39,10 +39,10 @@
 </head>
 <body>
 
-<div class="loader" aria-hidden="true"><span class="loader-word">NOMAD</span></div>
+<div class="loader" aria-hidden="true"><img class="loader-logo" src="img/logo.png" alt="" width="250" height="250"></div>
 
 <header class="nav" id="nav">
-  <a class="logo" href="#top" aria-label="Nomad Barbershop, на главную">NOMAD</a>
+  <a class="logo" href="#top" aria-label="Nomad Barbershop, на главную"><img src="img/logo.png" alt="" width="44" height="44">NOMAD</a>
   <nav class="nav-links" aria-label="Разделы сайта">
     <a href="#uslugi">Услуги</a>
     <a href="#master">Мастера</a>
@@ -163,10 +163,9 @@
       <figure class="cell cell-b ph" data-reveal>
         <img src="img/work-2.jpg" alt="Работа мастера Nomad Barbershop" loading="lazy" onerror="this.remove()">
       </figure>
-      <div class="cell cell-c" data-reveal>
-        <strong>4,9</strong>
-        <span>из 5 по оценкам гостей в 2ГИС</span>
-      </div>
+      <figure class="cell cell-c ph" data-reveal>
+        <img src="img/work-4.jpg" alt="Оформление бороды в Nomad Barbershop" loading="lazy" onerror="this.remove()">
+      </figure>
       <figure class="cell cell-d ph" data-reveal>
         <img src="img/work-3.jpg" alt="Результат стрижки в Nomad Barbershop" loading="lazy" onerror="this.remove()">
       </figure>
@@ -196,8 +195,15 @@
   </section>
 
   <section class="contact" id="kontakty">
-    <h2 class="contact-title" data-reveal>Выберите время и приходите</h2>
-    <a class="btn btn-primary btn-xl magnet" href="https://dikidi.net/807444" target="_blank" rel="noopener" data-reveal>Записаться</a>
+    <div class="contact-top">
+      <div class="contact-cta">
+        <h2 class="contact-title" data-reveal>Выберите время и приходите</h2>
+        <a class="btn btn-primary btn-xl magnet" href="https://dikidi.net/807444" target="_blank" rel="noopener" data-reveal>Записаться</a>
+      </div>
+      <figure class="cell contact-photo ph" data-reveal>
+        <img src="img/salon.jpg" alt="Вход в Nomad Barbershop на улице Машхур Жусупа, 35" loading="lazy" onerror="this.remove()">
+      </figure>
+    </div>
     <div class="contact-grid">
       <div data-reveal>
         <span class="k">Адрес</span>
@@ -225,7 +231,7 @@
 </main>
 
 <footer class="footer">
-  <span class="logo">NOMAD</span>
+  <span class="logo"><img src="img/logo.png" alt="" width="44" height="44">NOMAD</span>
   <span class="muted">Nomad Barbershop, Павлодар. 2026</span>
 </footer>
 

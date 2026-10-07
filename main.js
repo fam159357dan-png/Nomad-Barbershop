@@ -39,7 +39,7 @@
   gsap.set('.line-in', { y: '115%' });
   const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
   intro
-    .fromTo('.loader-word', { opacity: 0, letterSpacing: '.4em' }, { opacity: 1, letterSpacing: '.14em', duration: 0.9 })
+    .fromTo('.loader-logo', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.9 })
     .to('.loader', { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '+=0.15')
     .set('.loader', { display: 'none' })
     .to('.line-in', { yPercent: 0, y: 0, duration: 1.1, stagger: 0.12 }, '-=0.35')
