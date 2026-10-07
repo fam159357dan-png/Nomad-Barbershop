@@ -1,3 +1,6 @@
 .claude/
 *.log
 handoff*
+
+.vercel
+.env*
