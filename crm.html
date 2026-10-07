@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Nomad CRM | Записи и клиенты</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body::after{display:none}
+  .crm{max-width:1100px;margin:0 auto;padding:96px var(--pad) 64px}
+  .crm h1{font:600 clamp(1.6rem,3.6vw,2.6rem)/1.1 "Unbounded",sans-serif;letter-spacing:-.03em;margin-bottom:8px}
+  .crm .sub{color:var(--muted);margin-bottom:32px}
+  .sums{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+  .sums div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px}
+  .sums b{display:block;font:600 1.8rem "Unbounded",sans-serif;color:var(--accent)}
+  .sums span{color:var(--muted);font-size:.85rem}
+  form.add{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  label{display:grid;gap:6px;font-size:.85rem;color:var(--muted)}
+  input,select,textarea{font:inherit;color:var(--text);background:var(--bg);border:1px solid rgba(236,235,230,.28);border-radius:12px;padding:.7em .9em;width:100%}
+  input:focus,select:focus{border-color:var(--accent);outline:none}
+  .f2{grid-column:span 2}.f3{grid-column:span 3}.f6{grid-column:span 6}
+  .tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .tools input,.tools select{width:auto;flex:1;min-width:150px}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid rgba(236,235,230,.28)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .rows{display:grid;gap:10px}
+  .row{display:grid;grid-template-columns:1.4fr 1.2fr 1fr 150px auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+  .row b{display:block}.row small{color:var(--muted)}
+  .row select{padding:.5em .7em}
+  .acts{display:flex;gap:8px}
+  .acts a,.acts button{all:unset;cursor:pointer;color:var(--muted);font-size:.85rem;padding:6px 10px;border-radius:999px;border:1px solid var(--line)}
+  .acts a:hover,.acts button:hover{color:var(--accent);border-color:var(--accent)}
+  .empty{color:var(--muted);text-align:center;padding:48px 0;border:1px dashed var(--line);border-radius:var(--r)}
+  .note{color:var(--muted);font-size:.85rem;margin-top:32px;max-width:70ch}
+  @media(max-width:800px){
+    .sums{grid-template-columns:1fr 1fr}
+    form.add{grid-template-columns:1fr 1fr}.f2,.f3,.f6{grid-column:span 2}
+    .row{grid-template-columns:1fr 1fr}
+    .acts{grid-column:span 2}
+  }
+</style>
+</head>
+<body>
+<header class="nav scrolled"><a class="logo" href="./">NOMAD</a><span class="muted">CRM</span></header>
+
+<main class="crm">
+  <h1>Записи и клиенты</h1>
+  <p class="sub">Простой журнал записей. Данные хранятся в этом браузере.</p>
+
+  <div class="sums" id="sums"></div>
+
+  <form class="add" id="add">
+    <label class="f2">Имя клиента<input name="name" required autocomplete="off"></label>
+    <label class="f2">Телефон<input name="phone" type="tel" placeholder="+7 7__ ___ __ __" required></label>
+    <label class="f2">Услуга
+      <select name="service">
+        <option>Мужская стрижка</option><option>Сложные волосы</option><option>Детская стрижка</option>
+        <option>Химзавивка</option><option>Обучение</option><option>Другое</option>
+      </select>
+    </label>
+    <label class="f2">Дата и время<input name="when" type="datetime-local" required></label>
+    <label class="f2">Мастер<input name="master" list="masters" autocomplete="off"></label>
+    <datalist id="masters"><option>Ратмир</option><option>Салман</option><option>Светлана</option><option>Айгерим</option><option>Аман</option><option>Тимур</option><option>Жанна</option><option>Регина</option></datalist>
+    <label class="f2">Заметка<input name="note" autocomplete="off"></label>
+    <div class="f6"><button class="btn btn-primary" type="submit">Добавить запись</button></div>
+  </form>
+
+  <div class="tools">
+    <input id="q" type="search" placeholder="Поиск по имени или телефону" aria-label="Поиск">
+    <select id="fs" aria-label="Фильтр по статусу">
+      <option value="">Все статусы</option><option>Ожидает</option><option>Пришёл</option><option>Не пришёл</option><option>Отменена</option>
+    </select>
+    <button class="btn btn-ghost" id="csv" type="button">Скачать Excel (CSV)</button>
+    <button class="btn btn-ghost" id="bak" type="button">Резервная копия</button>
+    <label class="btn btn-ghost" style="cursor:pointer">Загрузить копию<input id="imp" type="file" accept="application/json" hidden></label>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <p class="note">Важно: записи сохраняются только на этом устройстве и в этом браузере. Если очистить историю браузера, они пропадут. Делайте резервную копию раз в неделю.</p>
+</main>
+
+<script>
+(() => {
+  const KEY = 'nomad-crm-v1';
+  const $ = (s) => document.querySelector(s);
+  const ST = ['Ожидает', 'Пришёл', 'Не пришёл', 'Отменена'];
+  let db = [];
+  try { db = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { alert('Не удалось сохранить: память браузера недоступна.'); } };
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = (iso) => new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const digits = (p) => p.replace(/\D/g, '').replace(/^8/, '7');
+
+  function render() {
+    const q = $('#q').value.trim().toLowerCase(), fs = $('#fs').value;
+    const list = db
+      .filter((r) => (!fs || r.status === fs) && (!q || (r.name + digits(r.phone) + r.phone).toLowerCase().includes(q)))
+      .sort((a, b) => a.when.localeCompare(b.when));
+    const today = new Date().toISOString().slice(0, 10);
+    $('#sums').innerHTML = [
+      [db.filter((r) => r.when.startsWith(today)).length, 'записей сегодня'],
+      [db.filter((r) => r.status === 'Ожидает').length, 'ожидают'],
+      [new Set(db.map((r) => digits(r.phone))).size, 'клиентов в базе'],
+      [db.filter((r) => r.status === 'Не пришёл').length, 'не пришли'],
+    ].map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
+    $('#rows').innerHTML = list.length ? list.map((r) => `
+      <div class="row" data-id="${r.id}">
+        <div><b>${esc(r.name)}</b><small>${esc(r.phone)}</small></div>
+        <div><b>${esc(r.service)}</b><small>${esc(r.master || 'Мастер не указан')}${r.note ? ', ' + esc(r.note) : ''}</small></div>
+        <div>${fmt(r.when)}</div>
+        <select aria-label="Статус">${ST.map((s) => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}</select>
+        <div class="acts"><a href="https://wa.me/${digits(r.phone)}" target="_blank" rel="noopener">WhatsApp</a><button type="button" data-del>Удалить</button></div>
+      </div>`).join('') : '<div class="empty">Записей пока нет. Добавьте первую в форме выше.</div>';
+  }
+
+  $('#add').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(e.target));
+    db.push({ id: Date.now().toString(36), status: 'Ожидает', ...d });
+    save(); e.target.reset(); render();
+  });
+  $('#rows').addEventListener('change', (e) => {
+    const id = e.target.closest('.row')?.dataset.id, r = db.find((x) => x.id === id);
+    if (r) { r.status = e.target.value; save(); render(); }
+  });
+  $('#rows').addEventListener('click', (e) => {
+    if (!e.target.matches('[data-del]')) return;
+    const id = e.target.closest('.row').dataset.id;
+    if (confirm('Удалить запись?')) { db = db.filter((x) => x.id !== id); save(); render(); }
+  });
+  $('#q').addEventListener('input', render);
+  $('#fs').addEventListener('change', render);
+
+  const download = (name, text, type) => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = name; a.click(); URL.revokeObjectURL(a.href);
+  };
+  $('#csv').addEventListener('click', () => {
+    const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = [['Имя', 'Телефон', 'Услуга', 'Дата и время', 'Мастер', 'Статус', 'Заметка'], ...db.map((r) => [r.name, r.phone, r.service, r.when.replace('T', ' '), r.master, r.status, r.note])];
+    download('nomad-zapisi.csv', '﻿' + rows.map((r) => r.map(q).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+  });
+  $('#bak').addEventListener('click', () => download('nomad-crm-backup.json', JSON.stringify(db), 'application/json'));
+  $('#imp').addEventListener('change', async (e) => {
+    try {
+      const data = JSON.parse(await e.target.files[0].text());
+      if (!Array.isArray(data)) throw 0;
+      if (confirm('Заменить текущие записи данными из копии?')) { db = data; save(); render(); }
+    } catch { alert('Файл не похож на резервную копию Nomad CRM.'); }
+    e.target.value = '';
+  });
+  render();
+})();
+</script>
+</body>
+</html>
