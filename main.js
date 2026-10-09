@@ -39,10 +39,10 @@
   gsap.set('.line-in', { y: '115%' });
   const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
   intro
-    .fromTo('.loader-logo', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.9 })
-    .to('.loader', { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '+=0.15')
+    .fromTo('.loader-logo', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 })
+    .to('.loader', { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, '+=0.05')
     .set('.loader', { display: 'none' })
-    .to('.line-in', { yPercent: 0, y: 0, duration: 1.1, stagger: 0.12 }, '-=0.35')
+    .to('.line-in', { yPercent: 0, y: 0, duration: 1, stagger: 0.12 }, '-=0.35')
     .fromTo('[data-hero]', { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12 }, '-=0.7')
     .to('.hero-word', { opacity: 1, duration: 1.4 }, '-=0.9');
 
